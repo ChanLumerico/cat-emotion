@@ -118,9 +118,7 @@ This approach is derived under the constraint that the resources (computational 
 Given a baseline architecture, EfficientNet scales it with the following formula:
 
 $$
-\text{depth: } d = \alpha^\phi \\
-\text{width: } w = \beta^\phi \\
-\text{resolution: } r = \gamma^\phi
+\text{depth: } d = \alpha^\phi \quad \text{width: } w = \beta^\phi \quad \text{resolution: } r = \gamma^\phi
 $$
 
 where $\phi$ is a user-chosen coefficient that controls how much resources the model should use; $\alpha$, $\beta$, and $\gamma$ are constants that determine how to allocate these resources across the dimensions of depth, width, and resolution.
