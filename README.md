@@ -43,7 +43,7 @@ The DFT transforms a signal from the time domain into the frequency domain.
 The Convolution Theorem states that the Fourier Transform of the convolution of two signals is the pointwise product of their Fourier Transforms:
 
 $$
-\mathcal{F}\left{f * g\right} = \mathcal{F}\left{f\right} \cdot \mathcal{F}\left{g\right}
+\mathcal{F}\{f * g\} = \mathcal{F}\{f\} \cdot \mathcal{F}\{g\}
 $$
 
 This theorem forms the basis for using FFT to compute convolutions efficiently.
@@ -84,7 +84,7 @@ $$
 Y[x, y, z] = \text{IFFT}(\hat{X} \odot \hat{K})[x, y, z]
 $$
     
-    Here, $Y[x, y, z]$ represents the output tensor, which is the result of convolving $X$ with $K$.
+Here, $Y[x, y, z]$ represents the output tensor, which is the result of convolving $X$ with $K$.
 
 ---
 
