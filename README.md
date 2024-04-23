@@ -1,5 +1,151 @@
 # 🐈 Cat Emotion Classification with EfficientNet
 
+## Background Theory
+
+### What is Convolution?
+
+The convolution operation is a cornerstone in many fields such as signal processing, image processing, and machine learning. 
+It involves the integration of two functions, showing how the shape of one is modified by the other. 
+The Fast Fourier Transform (FFT) provides an efficient way to compute convolutions, especially when dealing with large datasets or real-time processing, where traditional convolution becomes computationally expensive.
+
+Mathematically, convolution is defined for two functions $f(t)$ and $g(t)$ as:
+
+$$
+(f * g)(t) = \int_{-\infty}^\infty f(\tau) g(t - \tau) \, d\tau
+$$
+
+In discrete terms, for sequences $f[n]$ and $g[n]$ of length $N$, the convolution is given by:
+
+$$
+(f * g)[n] = \sum_{m=0}^{N-1} f[m] g[n - m]
+$$
+
+where $n-m$ is evaluated modulo $N$ in the case of circular convolution.
+
+### Fourier Transform
+
+The Fourier Transform (FT) of a continuous signal $x(t)$ is defined as:
+
+$$
+X(f) = \int_{-\infty}^\infty x(t) e^{-j 2\pi ft} \, dt
+$$
+
+For discrete signals, the Discrete Fourier Transform (DFT) is used:
+
+$$
+X[k] = \sum_{n=0}^{N-1} x[n] e^{-j \frac{2\pi kn}{N}}
+$$
+
+The DFT transforms a signal from the time domain into the frequency domain.
+
+### The Convolution Theorem
+
+The Convolution Theorem states that the Fourier Transform of the convolution of two signals is the pointwise product of their Fourier Transforms:
+
+$$
+\mathcal{F}\{f * g\} = \mathcal{F}\{f\} \cdot \mathcal{F}\{g\}
+$$
+
+This theorem forms the basis for using FFT to compute convolutions efficiently.
+
+### Tensor Convolution Accelerated by FFT
+
+Tensor convolution is an extension of traditional convolution techniques, applied particularly in fields like computer vision and deep learning, where multidimensional data structures known as tensors are manipulated. 
+The Fast Fourier Transform (FFT) accelerates tensor convolution significantly, enhancing the efficiency of operations such as those in convolutional neural networks (CNNs). 
+Below, we delve into the theory, procedure, and specific considerations for implementing tensor convolution using FFT.
+
+#### FFT for Tensors
+
+FFT can be extended to multidimensional data to speed up the convolution operation in multiple dimensions simultaneously. 
+The key principle remains utilizing the Convolution Theorem, which states that convolution in the spatial domain corresponds to element-wise multiplication in the frequency domain. 
+For tensors, this principle applies in each dimension independently.
+
+#### 3D Tensor Convolution
+
+Consider a 3D input tensor $X$ and a kernel $K$, both extended to the same size with zero-padding to avoid circular convolution artifacts. 
+Let their sizes after padding be $P \times Q \times R$. 
+
+The FFT-based convolution can be computed as follows:
+
+1. **FFT Computation**: Compute the FFT of both tensors $X$ and $K$ across all three dimensions:
+    
+    $$
+    \hat{X}[u, v, w] = \sum_{x=0}^{P-1} \sum_{y=0}^{Q-1} \sum_{z=0}^{R-1} X[x, y, z] \exp\left[{-j 2\pi (\frac{ux}{P} + \frac{vy}{Q} + \frac{wz}{R})}\right]
+    $$
+    
+    $$
+    \hat{K}[u, v, w] = \sum_{x=0}^{P-1} \sum_{y=0}^{Q-1} \sum_{z=0}^{R-1} K[x, y, z] \exp\left[{-j 2\pi (\frac{ux}{P} + \frac{vy}{Q} + \frac{wz}{R})}\right]
+    $$
+    
+2. **Element-wise Multiplication**: Multiply the Fourier transforms $\hat{X}$ and $\hat{K}$ element-wise.
+3. **Inverse FFT**: Apply the inverse FFT to obtain the convolved tensor in the spatial domain:
+    
+    $$
+    Y[x, y, z] = \text{IFFT}(\hat{X} \odot \hat{K})[x, y, z]
+    $$
+    
+    Here, $Y[x, y, z]$ represents the output tensor, which is the result of convolving $X$ with $K$.
+
+---
+
+## EfficientNet
+
+### Introduction
+
+EfficientNet is a family of convolutional neural network (CNN) architectures designed to achieve state-of-the-art accuracy while being highly efficient in terms of computational resources and model size. 
+Introduced by Mingxing Tan and Quoc V. Le in their 2019 paper "EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks," EfficientNet leverages a novel scaling method that uniformly scales all dimensions of depth, width, and resolution with a set of fixed scaling coefficients.
+
+### Convolutional Neural Networks (CNNs)
+
+At the core of EfficientNet are CNNs, which are primarily used in the field of deep learning for visual image analysis. 
+A CNN learns hierarchical representations of data, automatically detecting features from raw data by training on a set of labeled images.
+
+### Compound Model Scaling
+
+Prior to EfficientNet, scaling CNNs typically focused on one dimension at a time—either increasing the depth (number of layers), the width (number of channels per layer), or the resolution (size of the input image). 
+
+However, EfficientNet introduces a compound scaling method that systematically scales all three dimensions with a set of empirically determined constants. 
+This approach is derived under the constraint that the resources (computational and memory) used increase by a fixed amount.
+
+#### Model Structure
+
+<center>
+    <img src="img/effnet_structure.png" height="70%" width="70%">
+</center>
+
+### Compound Scaling Formula
+
+Given a baseline architecture, EfficientNet scales it with the following formula:
+
+$$
+\text{depth: } d = \alpha^\phi \\
+\text{width: } w = \beta^\phi \\
+\text{resolution: } r = \gamma^\phi
+$$
+
+where $\phi$ is a user-chosen coefficient that controls how much resources the model should use; $\alpha$, $\beta$, and $\gamma$ are constants that determine how to allocate these resources across the dimensions of depth, width, and resolution.
+
+### Applications
+
+EfficientNet has been applied successfully in various domains:
+- **Image Classification**: Outperforming other models on benchmarks like ImageNet.
+- **Object Detection and Segmentation**: When used as a backbone in frameworks like RetinaNet and Mask R-CNN.
+- **Transfer Learning**: Due to its efficiency and scalability, it's a popular choice for tasks with limited computational resources.
+
+### Strengths and Limitations of EfficientNet
+
+#### Strengths
+- **High Efficiency**: Achieves better accuracy with fewer parameters and less computation compared to other models of similar complexity.
+- **Scalability**: The compound scaling method provides a principled way to scale up CNNs in a more balanced manner across different dimensions.
+
+#### Limitations
+- **Dependency on Baseline Model**: The performance heavily depends on the choice of the baseline model.
+- **Resource Intensive at Larger Scales**: While efficient, the larger variants (like EfficientNet-B7) still require substantial computational resources.
+
+---
+
+## Implementation
+
 ### Import Modules
 
 ```py
