@@ -160,7 +160,7 @@ cython_debug/
 #.idea/
 
 # additional
-*.png
+*.jpg
 *.txt
 *.luma
 *.zip
