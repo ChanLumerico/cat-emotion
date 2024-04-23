@@ -126,7 +126,7 @@ show_images(images, labels)
 ### Import `EfficientNet-B5`
 
 <center>
-    <img src="https://www.researchgate.net/publication/358585113/figure/fig4/AS:1123594918739968@1644897312526/A-A-concise-representation-of-the-EfficientNet-B0-model-B-The-building-blocks-of.png" height="70%" width="70%">
+    <img src="img/effnet.png" height="70%" width="70%">
 </center>
 
 ```py
