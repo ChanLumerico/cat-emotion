@@ -43,7 +43,7 @@ The DFT transforms a signal from the time domain into the frequency domain.
 The Convolution Theorem states that the Fourier Transform of the convolution of two signals is the pointwise product of their Fourier Transforms:
 
 $$
-\mathcal{F}\{f * g\} = \mathcal{F}\{f\} \cdot \mathcal{F}\{g\}
+\mathcal{F}\left{f * g\right} = \mathcal{F}\left{f\right} \cdot \mathcal{F}\left{g\right}
 $$
 
 This theorem forms the basis for using FFT to compute convolutions efficiently.
@@ -69,20 +69,20 @@ The FFT-based convolution can be computed as follows:
 
 1. **FFT Computation**: Compute the FFT of both tensors $X$ and $K$ across all three dimensions:
     
-    $$
-    \hat{X}[u, v, w] = \sum_{x=0}^{P-1} \sum_{y=0}^{Q-1} \sum_{z=0}^{R-1} X[x, y, z] \exp\left[{-j 2\pi (\frac{ux}{P} + \frac{vy}{Q} + \frac{wz}{R})}\right]
-    $$
+$$
+\hat{X}[u, v, w] = \sum_{x=0}^{P-1} \sum_{y=0}^{Q-1} \sum_{z=0}^{R-1} X[x, y, z] \exp\left[{-j 2\pi (\frac{ux}{P} + \frac{vy}{Q} + \frac{wz}{R})}\right]
+$$
     
-    $$
-    \hat{K}[u, v, w] = \sum_{x=0}^{P-1} \sum_{y=0}^{Q-1} \sum_{z=0}^{R-1} K[x, y, z] \exp\left[{-j 2\pi (\frac{ux}{P} + \frac{vy}{Q} + \frac{wz}{R})}\right]
-    $$
+$$
+\hat{K}[u, v, w] = \sum_{x=0}^{P-1} \sum_{y=0}^{Q-1} \sum_{z=0}^{R-1} K[x, y, z] \exp\left[{-j 2\pi (\frac{ux}{P} + \frac{vy}{Q} + \frac{wz}{R})}\right]
+$$
     
 2. **Element-wise Multiplication**: Multiply the Fourier transforms $\hat{X}$ and $\hat{K}$ element-wise.
 3. **Inverse FFT**: Apply the inverse FFT to obtain the convolved tensor in the spatial domain:
     
-    $$
-    Y[x, y, z] = \text{IFFT}(\hat{X} \odot \hat{K})[x, y, z]
-    $$
+$$
+Y[x, y, z] = \text{IFFT}(\hat{X} \odot \hat{K})[x, y, z]
+$$
     
     Here, $Y[x, y, z]$ represents the output tensor, which is the result of convolving $X$ with $K$.
 
